@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">All Items</h2>
+<div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for item in items %}
+        <div class="col">
+            {% if item.status == 'lost' %}
+                <div class="card border-danger">
+            {% else %}
+                <div class="card border-success">
+            {% endif %}
+
+            {% if item.image and item.image.url %}
+            <div style="height: 200px; overflow: hidden;">
+                <img src="{{ item.image.url }}" class="card-img-top" alt="Item Image"
+                     style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
+                     data-bs-toggle="modal" data-bs-target="#imageModal{{ item.id }}">
+            </div>
+            {% endif %}
+
+            <div class="card-body">
+                {% if item.status == 'lost' %}
+                    <h5 class="card-title text-danger">[LOST] {{ item.title }}</h5>
+                {% else %}
+                    <h5 class="card-title text-success">[FOUND] {{ item.title }}</h5>
+                {% endif %}
+                <p class="card-text"><strong>Location:</strong> {{ item.location }}</p>
+                <p class="card-text">{{ item.description }}</p>
+                <p class="card-text"><small class="text-muted">Found on: {{ item.date_found }}</small></p>
+                <p class="card-text"><strong>Contact:</strong> {{ item.contact_info }}</p>
+
+                {% if item.user == user %}
+                    <a href="/edit/{{ item.id }}/" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="/delete/{{ item.id }}/" class="btn btn-sm btn-outline-danger">Delete</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ✅ MODAL (must be inside the loop!) -->
+       
+        <div class="modal fade" id="imageModal{{ item.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ item.id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="imageModalLabel{{ item.id }}">{{ item.title }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    {% if item.image and item.image.url %}
+                  <img src="{{ item.image.url }}" alt="Full Image" class="img-fluid">
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+        </div>
+        </div>
+        {% empty %}
+        <div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
+            <div class="text-center p-4 border rounded shadow" style="background-color: #f9f9f9; max-width: 500px;">
+                <h4 class="text-muted mb-3">No items found yet.</h4>
+                <p class="text-secondary">Lost or found something? Be the first to post and help others.</p>
+        
+                {% if user.is_authenticated %}
+                    <a href="{% url 'add_item' %}" class="btn btn-primary px-4 py-2 mt-3"
+                       style="box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);">
+                        <i class="bi bi-plus-circle me-2"></i> Post Lost/Found Item
+                    </a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-outline-primary px-4 py-2 mt-3">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Login to Post
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        
+
+</div>
+{% endblock %}
