@@ -1,80 +1,122 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="mb-4">All Items</h2>
-<div class="row row-cols-1 row-cols-md-2 g-4">
+<div class="container py-5">
+  <h2 class="mb-5 text-center fw-bold" style="font-family: 'Playfair Display', serif; color: #1A202C; font-size: 2.8rem; letter-spacing: 0.5px;">Lost & Found Gallery</h2>
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for item in items %}
-        <div class="col">
-            {% if item.status == 'lost' %}
-                <div class="card border-danger">
-            {% else %}
-                <div class="card border-success">
-            {% endif %}
-
-            {% if item.image and item.image.url %}
-            <div style="height: 200px; overflow: hidden;">
-                <img src="{{ item.image.url }}" class="card-img-top" alt="Item Image"
-                     style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;"
-                     data-bs-toggle="modal" data-bs-target="#imageModal{{ item.id }}">
-            </div>
-            {% endif %}
-
-            <div class="card-body">
-                {% if item.status == 'lost' %}
-                    <h5 class="card-title text-danger">[LOST] {{ item.title }}</h5>
-                {% else %}
-                    <h5 class="card-title text-success">[FOUND] {{ item.title }}</h5>
-                {% endif %}
-                <p class="card-text"><strong>Location:</strong> {{ item.location }}</p>
-                <p class="card-text">{{ item.description }}</p>
-                <p class="card-text"><small class="text-muted">Found on: {{ item.date_found }}</small></p>
-                <p class="card-text"><strong>Contact:</strong> {{ item.contact_info }}</p>
-
-                {% if item.user == user %}
-                    <a href="/edit/{{ item.id }}/" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="/delete/{{ item.id }}/" class="btn btn-sm btn-outline-danger">Delete</a>
-                {% endif %}
-            </div>
-        </div>
-
-        <!-- ✅ MODAL (must be inside the loop!) -->
-       
-        <div class="modal fade" id="imageModal{{ item.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ item.id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="imageModalLabel{{ item.id }}">{{ item.title }}</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    {% if item.image and item.image.url %}
-                  <img src="{{ item.image.url }}" alt="Full Image" class="img-fluid">
-                  {% endif %}
-                </div>
+      <div class="col">
+        <div class="card elegant-card animate__animated animate__fadeInUp" data-status="{{ item.status }}" aria-label="{{ item.status }} item: {{ item.title }}">
+          <div class="card-header" style="{% if item.status == 'lost' %}background: linear-gradient(90deg, #C53030, #B7791F);{% else %}background: linear-gradient(90deg, #2C7A7B, #4C9A9B);{% endif %} height: 5px;"></div>
+          {% if item.image and item.image.url %}
+            <div class="card-img-wrapper" style="height: 220px; overflow: hidden; position: relative;">
+              <img src="{{ item.image.url }}" class="card-img-top" alt="Item Image" loading="lazy"
+                   style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
+                   data-bs-toggle="modal" data-bs-target="#imageModal{{ item.id }}">
+              <div class="card-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(26, 32, 44, 0.85); color: #F7FAFC; padding: 15px; transform: translateY(100%); transition: transform 0.3s ease;">
+                <p class="mb-0" style="font-family: 'Inter', sans-serif;">{{ item.description }}</p>
               </div>
             </div>
-        </div>
-        </div>
-        {% empty %}
-        <div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
-            <div class="text-center p-4 border rounded shadow" style="background-color: #f9f9f9; max-width: 500px;">
-                <h4 class="text-muted mb-3">No items found yet.</h4>
-                <p class="text-secondary">Lost or found something? Be the first to post and help others.</p>
-        
-                {% if user.is_authenticated %}
-                    <a href="{% url 'add_item' %}" class="btn btn-primary px-4 py-2 mt-3"
-                       style="box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);">
-                        <i class="bi bi-plus-circle me-2"></i> Post Lost/Found Item
-                    </a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-outline-primary px-4 py-2 mt-3">
-                        <i class="bi bi-box-arrow-in-right me-2"></i> Login to Post
-                    </a>
-                {% endif %}
+          {% else %}
+            <div class="card-img-wrapper" style="height: 220px; background: #E2E8F0; display: flex; align-items: center; justify-content: center;">
+              <span style="font-family: 'Inter', sans-serif; color: #4A5568;">No Image</span>
             </div>
+          {% endif %}
+          <div class="card-body p-4">
+            <h5 class="card-title fw-bold mb-3" style="{% if item.status == 'lost' %}color: #C53030;{% else %}color: #2C7A7B;{% endif %} font-family: 'Playfair Display', serif; font-size: 1.5rem;">
+              [{{ item.status|upper }}] {{ item.title }}
+            </h5><p class="card-text" style="font-family: 'Inter', sans-serif; color: #4A5568;"><strong>Description:</strong> {{ item.description }}</p>
+            <p class="card-text" style="font-family: 'Inter', sans-serif; color: #4A5568;"><strong>Location:</strong> {{ item.location }}</p>
+            <p class="card-text" style="font-family: 'Inter', sans-serif; color: #4A5568;"><strong>Contact:</strong> {{ item.contact_info }}</p>
+            <p class="card-text"><small class="text-muted" style="font-family: 'Inter', sans-serif;">Posted: {{ item.date_found }}</small></p>
+            {% if item.user == user %}
+              <div class="d-flex gap-2 mt-3">
+                <a href="/edit/{{ item.id }}/" class="btn btn-sm elegant-btn-warning">Edit</a>
+                <a href="/delete/{{ item.id }}/" class="btn btn-sm elegant-btn-danger">Delete</a>
+              </div>
+            {% endif %}
+          </div>
         </div>
-        {% endfor %}
-        
-        
 
+        <!-- Image Modal -->
+        <div class="modal fade" id="imageModal{{ item.id }}" tabindex="-1" aria-labelledby="imageModalLabel{{ item.id }}" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content elegant-modal">
+              <div class="modal-header" style="{% if item.status == 'lost' %}border-bottom: 2px solid #C53030;{% else %}border-bottom: 2px solid #2C7A7B;{% endif %}">
+                <h5 class="modal-title fw-bold" id="imageModalLabel{{ item.id }}" style="font-family: 'Playfair Display', serif; {% if item.status == 'lost' %}color: #C53030;{% else %}color: #2C7A7B;{% endif %}">{{ item.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body text-center">
+                {% if item.image and item.image.url %}
+                  <img src="{{ item.image.url }}" alt="Full Image" class="img-fluid" style="border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="container-fluid d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
+        <div class="text-center p-5 elegant-card animate__animated animate__fadeInUp" style="max-width: 500px;">
+          <div class="card-header" style="background: linear-gradient(90deg, #2C7A7B, #4C9A9B); height: 5px;"></div>
+          <div class="card-body">
+            <h4 class="text-muted mb-3" style="font-family: 'Playfair Display', serif;">No Items Found</h4>
+            <p class="text-secondary" style="font-family: 'Inter', sans-serif;">Lost or found something? Be the first to share and connect.</p>
+            {% if user.is_authenticated %}
+              <a href="{% url 'add_item' %}" class="btn elegant-btn px-4 py-2 mt-3">
+                <i class="bi bi-plus-circle me-2"></i> Post Lost/Found Item
+              </a>
+            {% else %}
+              <a href="{% url 'login' %}" class="btn elegant-btn-outline px-4 py-2 mt-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Login to Post
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
 </div>
+
+<style>
+  .elegant-card:hover .card-img-wrapper .card-overlay {
+    transform: translateY(0);
+  }
+
+  .card-img-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-img-wrapper:hover img {
+    transform: scale(1.05);
+  }
+
+  .card-overlay {
+    will-change: transform;
+  }
+
+  @media (max-width: 768px) {
+    .card-img-wrapper {
+      height: 180px;
+    }
+    h2 {
+      font-size: 2rem;
+    }
+    .card-overlay {
+      transform: translateY(0); /* Always visible on mobile */
+    }
+  }
+</style>
+
+<script>
+  // Toggle overlay on click for mobile
+  document.querySelectorAll('.elegant-card').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (window.innerWidth <= 768 && !e.target.closest('a, img, button')) {
+        const overlay = card.querySelector('.card-overlay');
+        overlay.style.transform = overlay.style.transform === 'translateY(0px)' ? 'translateY(100%)' : 'translateY(0px)';
+      }
+    });
+  });
+</script>
 {% endblock %}

@@ -1,71 +1,261 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2 class="mb-4 text-center text-primary fw-bold">Edit Item</h2>
+<div class="container py-5">
+  <h2 class="text-center fw-bold mb-5" style="font-family: 'Playfair Display', serif; color: #1A202C; font-size: 2.8rem;">Edit Your Lost or Found Item</h2>
 
-<!-- Centered container with some margin and padding for effect -->
-<div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card shadow-lg p-4" style="max-width: 650px; width: 100%; border-radius: 20px; background: #ffffff;">
-        <div class="card-body p-5">
-            <h5 class="card-title text-center mb-4 fw-bold" style="color: #1a3d58;">Edit the item details below</h5>
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="card elegant-card shadow-lg p-4 animate__animated animate__fadeInUp" style="width: 100%; max-width: 650px;">
+      <div class="card-header" style="background: linear-gradient(90deg, #2C7A7B, #B7791F); height: 5px;"></div>
+      <div class="card-body p-5">
+        <h5 class="card-title text-center mb-4 fw-bold" style="font-family: 'Playfair Display', serif; color: #1A202C;">Update Item Details</h5>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+        <!-- Display form errors -->
+        {% if form.errors %}
+          <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error:</strong> Please correct the following issues:
+            <ul>
+              {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                  <li>{{ field|title }}: {{ error }}</li>
+                {% endfor %}
+              {% endfor %}
+            </ul>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endif %}
 
-                <div class="form-group mb-3">
-                    {{ form.as_p }}
-                </div>
+        <form method="post" enctype="multipart/form-data" id="editForm" aria-label="Edit lost or found item">
+          {% csrf_token %}
 
-                <!-- Button with hover effect and transition -->
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-lg rounded-pill text-white shadow-sm transition-all border-0 hover-custom">
-                        <i class="bi bi-save me-2"></i> Save Changes
-                    </button>
-                </div>
-            </form>
-        </div>
+          <div class="form-group mb-4 position-relative">
+            <input type="text" id="id_title" name="title" class="form-control elegant-input" value="{{ form.title.value|default:'' }}" required placeholder="Item Name">
+            <label for="id_title" class="elegant-label">Item Name</label>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <textarea id="id_description" name="description" class="form-control elegant-input" rows="4" required placeholder="Description">{{ form.description.value|default:'' }}</textarea>
+            <label for="id_description" class="elegant-label">Description</label>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <select id="id_status" name="status" class="form-control elegant-input" required>
+              <option value="" disabled {% if not form.status.value %}selected{% endif %}>Select Category</option>
+              <option value="lost" {% if form.status.value == 'lost' %}selected{% endif %}>Lost</option>
+              <option value="found" {% if form.status.value == 'found' %}selected{% endif %}>Found</option>
+            </select>
+            <label for="id_status" class="elegant-label">Category</label>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <input type="text" id="id_location" name="location" class="form-control elegant-input" value="{{ form.location.value|default:'' }}" required placeholder="Location">
+            <label for="id_location" class="elegant-label">Location</label>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <input type="text" id="id_contact_info" name="contact_info" class="form-control elegant-input" value="{{ form.contact_info.value|default:'' }}" required placeholder="Contact Information">
+            <label for="id_contact_info" class="elegant-label">Contact Information</label>
+          </div>
+
+          <div class="form-group mb-4 position-relative">
+            <input type="date" id="id_date_found" name="date_found" class="form-control elegant-input" value="{{ form.date_found.value|date:'Y-m-d'|default:'' }}" required>
+            <label for="id_date_found" class="elegant-label">Date Found</label>
+          </div>
+
+          <div class="form-group mb-4">
+            <label for="id_image" class="elegant-label-static">Upload Image</label>
+            <div class="elegant-upload" id="dropZone">
+              <p class="text-center mb-0" style="font-family: 'Inter', sans-serif; color: #4A5568;">Drag & Drop or Click to Upload</p>
+              <input type="file" id="id_image" name="image" class="form-control elegant-input-file" accept="image/*">
+              <div id="imagePreview" class="mt-3">
+                {% if item.image %}
+                  <img src="{{ item.image.url }}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);" alt="Current item image">
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn elegant-btn" id="submitButton">Save Changes</button>
+            <div class="spinner-border text-teal d-none" id="loadingSpinner" role="status">
+              <span class="visually-hidden">Saving...</span>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- Custom Hover Style using CSS -->
 <style>
-    /* Button Style */
-    .hover-custom {
-        background:rgb(38, 109, 110);
-        border: 2px solidrgb(94, 233, 224);
-        transition: all 0.3s ease-in-out;
-    }
+  .elegant-input,
+  .elegant-input-file {
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 12px 15px;
+    font-size: 1rem;
+    background: #F7FAFC;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+  }
 
-    .hover-custom:hover {
-        background: #1a3d58; /* Navy blue color on hover */
-        border: 2px solid #1a3d58; /* Matching border color */
-        transform: scale(1.05);
-    }
+  .elegant-input:focus,
+  .elegant-input-file:focus {
+    border-color: #2C7A7B;
+    box-shadow: 0 0 8px rgba(44, 122, 123, 0.2);
+    outline: none;
+  }
 
-    /* Form elements customization */
-    .form-group input, .form-group select, .form-group textarea {
-        border-radius: 15px;
-        border: 1px solid #ddd;
-        padding: 12px;
-        font-size: 16px;
-        width: 100%;
-        transition: border-color 0.3s ease-in-out;
-        background-color: #f4f4f4; /* Light background for inputs */
-    }
+  .elegant-input::placeholder {
+    color: transparent;
+  }
 
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-        border-color:rgb(34, 110, 117);
-        box-shadow: 0 0 5px rgba(43, 122, 120, 0.5);
-    }
+  .elegant-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    color: #1A202C;
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    padding: 0 5px;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
 
-    /* Title and form styling */
+  .elegant-label-static {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1A202C;
+    margin-bottom: 8px;
+  }
+
+  .elegant-input:focus + .elegant-label,
+  .elegant-input:not(:placeholder-shown) + .elegant-label {
+    top: -10px;
+    font-size: 0.8rem;
+    background: #F7FAFC;
+    color: #2C7A7B;
+  }
+
+  .elegant-upload {
+    border: 2px dashed #E2E8F0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background: #F7FAFC;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .elegant-upload:hover,
+  .elegant-upload.dragover {
+    border-color: #2C7A7B;
+    background: #EDF2F7;
+  }
+
+  .elegant-btn {
+    background: linear-gradient(90deg, #2C7A7B, #4C9A9B);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .elegant-btn:hover {
+    background: linear-gradient(90deg, #4C9A9B, #2C7A7B);
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  }
+
+  .elegant-btn:focus {
+    outline: 2px solid #2C7A7B;
+    outline-offset: 2px;
+  }
+
+  .text-teal {
+    color: #2C7A7B;
+  }
+
+  @media (max-width: 576px) {
+    .elegant-card {
+      padding: 1.5rem;
+    }
     h2 {
-        font-size: 36px;
-        letter-spacing: 1.5px;
-        color: #3A3A3A;
+      font-size: 2rem;
     }
-    .card {
-        border-radius: 20px;
+    .card-title {
+      font-size: 1.3rem;
     }
+    .elegant-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+  }
 </style>
+
+<script>
+  const dropZone = document.getElementById('dropZone');
+  const imageInput = document.getElementById('id_image');
+  const imagePreview = document.getElementById('imagePreview');
+
+  // Click to open file dialog
+  dropZone.addEventListener('click', () => {
+    imageInput.click();
+  });
+
+  // Drag-and-drop handling
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      imageInput.files = e.dataTransfer.files;
+      displayPreview(file);
+    }
+  });
+
+  // File input change
+  imageInput.addEventListener('change', () => {
+    if (imageInput.files[0]) {
+      displayPreview(imageInput.files[0]);
+    }
+  });
+
+  function displayPreview(file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      imagePreview.innerHTML = `<img src="${reader.result}" style="max-width: 100%; border-radius: 8px; margin-top: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);" alt="Selected image">`;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Form submission handling
+  const form = document.getElementById('editForm');
+  const submitButton = document.getElementById('submitButton');
+  const loadingSpinner = document.getElementById('loadingSpinner');
+
+  form.addEventListener('submit', () => {
+    console.log('Form submitted'); // Debug
+    loadingSpinner.classList.remove('d-none');
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+  });
+</script>
 {% endblock %}

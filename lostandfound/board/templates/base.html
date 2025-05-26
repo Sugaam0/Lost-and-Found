@@ -1,130 +1,267 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Lost & Found</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS (v5 example) -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost & Found</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
-    <style>
-        /* Custom Navbar Styles */
-        .navbar {
-            background-color: #1a3d58; /* Navy blue background */
-            border-radius: 10px; /* Slightly rounded navbar */
-        }
+    body {
+      background: linear-gradient(135deg, #F7FAFC 0%, #E2E8F0 100%), url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"%3E%3Cg fill="%23E2E8F0" fill-opacity="0.1"%3E%3Cpath d="M0 40L40 0H20L0 20z"/%3E%3C/g%3E%3C/svg%3E');
+      font-family: 'Inter', sans-serif;
+      color: #1A202C;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .navbar-nav .nav-link {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 500;
-            color: #dfe6e9; /* Light grayish text */
-            transition: all 0.3s ease;
-        }
+    .site-wrapper {
+      flex: 1 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .navbar-nav .nav-link:hover {
-            color: #ff7f50; /* Soft coral hover color */
-            text-decoration: none;
-        }
+    main {
+      flex: 1 0 auto;
+    }
 
-        .navbar-brand {
-            font-family: 'Poppins', sans-serif;
-            font-weight: 600;
-            font-size: 1.8rem;
-            color: #ffffff;
-        }
+    .navbar {
+      background: rgba(26, 32, 44, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 0 0 12px 12px;
+      padding: 1rem 2rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
 
-        /* Custom background and fluffy theme */
-        body {
-            background-color: #f7f7f7; /* Light background to contrast the navbar */
-            font-family: 'Poppins', sans-serif;
-        }
+    .navbar-brand {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #FFFFFF;
+      transition: all 0.3s ease;
+    }
 
-        .container {
-            max-width: 900px;
-        }
+    .navbar-brand:hover {
+      color: #B7791F;
+    }
 
-        .btn-primary {
-            background-color: #4b8da8;
-            border: none;
-            border-radius: 30px;
-            padding: 10px 25px;
-            transition: all 0.3s ease;
-        }
+    .navbar-nav .nav-link {
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      color: #F7FAFC;
+      margin-left: 1.5rem;
+      transition: all 0.3s ease;
+    }
 
-        .btn-primary:hover {
-            background-color: #2a5a6d; /* Darker blue for hover effect */
-        }
+    .navbar-nav .nav-link:hover {
+      color: #B7791F;
+      transform: translateY(-2px);
+    }
 
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
+    .container {
+      max-width: 1200px;
+      padding: 0 15px;
+    }
 
-        .footer {
-            background-color: #e0f7fa;
-            padding: 10px 0;
-            text-align: center;
-            border-radius: 10px;
-            font-size: 1rem;
-            color: #2a3d45;
-        }
+    .elegant-card {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05), 0 4px 10px rgba(0, 0, 0, 0.05);
+      border: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+      background: #FFFFFF;
+      will-change: transform;
+    }
 
-        footer a {
-            color: #4e5d6e;
-            text-decoration: none;
-        }
-        
-        footer a:hover {
-            color: #ff7f50;
-        }
-    </style>
+    .elegant-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1), 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .elegant-btn {
+      background: linear-gradient(90deg, #2C7A7B, #4C9A9B);
+      border: none;
+      border-radius: 25px;
+      padding: 10px 25px;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .elegant-btn:hover {
+      background: linear-gradient(90deg, #4C9A9B, #2C7A7B);
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .elegant-btn-warning {
+      background: linear-gradient(90deg, #B7791F, #D69E2E);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .elegant-btn-warning:hover {
+      background: linear-gradient(90deg, #D69E2E, #B7791F);
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .elegant-btn-danger {
+      background: linear-gradient(90deg, #C53030, #9B2C2C);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 20px;
+      color: #FFFFFF;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .elegant-btn-danger:hover {
+      background: linear-gradient(90deg, #9B2C2C, #C53030);
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .elegant-btn-outline {
+      border: 2px solid #2C7A7B;
+      border-radius: 20px;
+      padding: 8px 20px;
+      color: #2C7A7B;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .elegant-btn-outline:hover {
+      background: #2C7A7B;
+      color: #FFFFFF;
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .elegant-modal {
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      background: #FFFFFF;
+    }
+
+    .footer {
+      background: linear-gradient(90deg, #1A202C, #2C7A7B);
+      padding: 2rem 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #F7FAFC;
+      flex-shrink: 0;
+      border-radius: 12px 12px 0 0;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .footer a {
+      color: #B7791F;
+      text-decoration: none;
+      margin: 0 10px;
+      transition: color 0.3s ease;
+    }
+
+    .footer a:hover {
+      color: #FFFFFF;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 1rem;
+      }
+      .navbar-brand {
+        font-size: 1.6rem;
+      }
+      .navbar-nav .nav-link {
+        margin-left: 0.5rem;
+        font-size: 0.9rem;
+      }
+      .container {
+        padding: 0 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="/">Lost & Found</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'homepage' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/add/">Post Item</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout/">Logout</a>
-                        </li>
-                    {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'homepage' %}">Home</a>
-                    </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/login/">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/register/">Register</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+  <div class="site-wrapper">
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Lost & Found</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'homepage' %}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/add/">Post Item</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout/">Logout</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'homepage' %}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/login/">Login</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/register/">Register</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
+      </div>
     </nav>
 
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
-    </div>
+    <main class="container mt-5">
+      {% block content %}{% endblock %}
+    </main>
 
     <footer class="footer">
-        <p>&copy; 2025 Lost & Found | <a href="/contact/">Contact</a></p>
+      <p>
+        © 2025 Lost & Found | 
+        <a href="#">Contact</a> | 
+        <a href="#"><i class="bi bi-twitter"></i></a> | 
+        <a href="#"><i class="bi bi-facebook"></i></a>
+      </p>
     </footer>
-    <!-- Bootstrap JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Parallax effect on scroll
+    window.addEventListener('scroll', () => {
+      const cards = document.querySelectorAll('.elegant-card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const offset = window.innerHeight - rect.top;
+        card.style.transform = `translateY(${offset * 0.02}px)`;
+      });
+    });
+  </script>
 </body>
 </html>
